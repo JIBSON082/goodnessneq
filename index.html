@@ -409,10 +409,14 @@ footer a{color:var(--ink)}
 
 /* phone fixes: CTA above the fold, tighter story panels */
 @media(max-width:899px){
-  .hero{padding-top:98px;padding-bottom:40px}
-  .ht{display:flex;flex-direction:column;align-items:flex-start}
-  .ht .ttl{margin:18px 0 16px}
-  .ht .l3{order:5}.ht .cta{order:4;margin:18px 0 18px}.ht .for{order:6}
+  .hero{display:block;min-height:0;padding:0}
+  .hg{display:block}
+  .ht{position:relative;height:100vh;height:100svh;min-height:0}
+  .ht .fit{position:absolute;left:0;top:0;width:350px;transform-origin:0 0;display:flex;flex-direction:column;align-items:flex-start}
+  .fit .ttl{margin:18px 0 16px}
+  .fit .l3{order:5}.fit .cta{order:4;margin:18px 0 16px}.fit .for{order:6}
+  .hvis{padding:40px 0 80px}
+  .fit.s1 .l3,.fit.s1 .for{display:none}.fit.s2 .l1{display:none}
   .ht p.l1{font-size:16.5px;line-height:1.5}
   .ht p.l2{margin:10px 0 0}
   .pn{justify-content:flex-end;padding-bottom:150px}
@@ -525,7 +529,7 @@ footer a{color:var(--ink)}
   </svg>
 
   <div class="w hg">
-    <div class="ht">
+    <div class="ht"><div class="fit">
       <p class="sub1 hv" style="--d:100ms">Why being good is not enough to navigate life well</p>
       <h1 class="ttl" id="ttl" aria-label="Goodness is not a strategy">
         <span class="w1" aria-hidden="true"><span class="ln">GOODNESS</span></span>
@@ -537,7 +541,7 @@ footer a{color:var(--ink)}
       <p class="l3 hv" style="--d:1500ms">Learn how to combine character, commitment, and strategy to turn the person you want to become into the life you want to live.</p>
       <div class="cta hv" style="--d:1600ms"><a class="btn mag" data-buy href="#get">Get the book <b>₦5,000</b></a><a class="btn g mag" href="#inside">Look inside</a></div>
       <p class="for hv" style="--d:1700ms">For young people ready to stop drifting and start living intentionally.</p>
-    </div>
+    </div></div>
     <div class="hvis hv" style="--d:900ms" id="hvis">
       <div class="bk" id="bk">
         <div class="bkb"><div class="bki"><img data-img="cover" alt="Cover of Goodness Is Not a Strategy by Olawale Eniola" width="720" height="1080"></div></div>
@@ -793,7 +797,7 @@ const HERO={letters:[],vis:true,mx:null,my:null,t0:performance.now()};
   function fit(){
     HERO.letters.forEach(s=>{s.style.width='';s.style.fontVariationSettings=''});
     const col=h.parentElement.clientWidth;h.style.setProperty('--fs','100px');
-    const w=Math.max(...lns.map(l=>l.getBoundingClientRect().width));
+    const w=Math.max(...lns.map(l=>l.offsetWidth));
     const fs=clamp(col/w*100,48,240);h.style.setProperty('--fs',fs.toFixed(1)+'px');
     HERO.letters.forEach(s=>{s.style.width=(s.offsetWidth+.5)+'px'});
   }
@@ -860,6 +864,24 @@ addEventListener('load',fitAll);setTimeout(fitAll,1500);
 const SCR=[];
 if(!reduce)$$('.scrub').forEach(el=>{const ws=[];(function walk(n){[...n.childNodes].forEach(c=>{if(c.nodeType===3){const f=document.createDocumentFragment();c.textContent.split(/(\s+)/).forEach(p=>{if(!p)return;if(/^\s+$/.test(p)){f.appendChild(document.createTextNode(' '));return}const s=document.createElement('span');s.className='sw';s.textContent=p;ws.push(s);f.appendChild(s)});c.replaceWith(f)}else if(c.nodeType===1)walk(c)})})(el);SCR.push({el,ws,p:-1})});
 
+/* ---------- phone hero: identical composition on every screen ---------- */
+(function(){const ht=$('.ht'),f=$('.fit',ht),mq=matchMedia('(max-width:899px)');
+  function run(){
+    if(!mq.matches){f.style.transform='';return}
+    f.style.transform='none';f.classList.remove('s1','s2');
+    const W=ht.clientWidth,H=ht.clientHeight,top=88,bot=22,aH=H-top-bot;let nh=f.offsetHeight;
+    const kw=(W-32)/350;
+    if(aH/nh<Math.min(kw,.85)){f.classList.add('s1');nh=f.offsetHeight;if(aH/nh<Math.min(kw,.78)){f.classList.add('s2');nh=f.offsetHeight}}
+    const k=clamp(Math.min(kw,aH/nh),.4,1.7);
+    f.style.transform='translate('+((W-350*k)/2).toFixed(1)+'px,'+(top+(aH-nh*k)/2).toFixed(1)+'px) scale('+k.toFixed(4)+')';
+  }
+  window.fitHeroBox=run;run();
+  (document.fonts&&document.fonts.ready||Promise.resolve()).then(run);
+  if(document.fonts&&document.fonts.addEventListener)document.fonts.addEventListener('loadingdone',run);
+  addEventListener('load',run);addEventListener('resize',run);addEventListener('orientationchange',()=>setTimeout(run,200));
+  [400,1300,3600].forEach(t=>setTimeout(run,t));
+})();
+
 /* ---------- single animation loop ---------- */
 (function(){
   const bk=$('#bk'),hv=$('#hvis');
@@ -924,7 +946,7 @@ if(!reduce)$$('.scrub').forEach(el=>{const ws=[];(function walk(n){[...n.childNo
     const pr=clamp(y/(html.scrollHeight-vh||1),0,1);prog.style.transform='scaleX('+pr+')';pp.style.transform='translateX('+(pr*(innerWidth-30)).toFixed(1)+'px)';
     if(reduce){venn.style.setProperty('--p',1);return}
     /* hero depth */
-    if(y<vh*1.4){const k=clamp(y/vh,0,1);bk.style.transform='translate3d(0,'+(k*70).toFixed(1)+'px,0) rotate('+(k*-9).toFixed(2)+'deg) scale('+(1-k*.14).toFixed(3)+')';ht.style.transform='translate3d(0,'+(k*-46).toFixed(1)+'px,0)';ht.style.opacity=(1-k*.95).toFixed(3);blobs.forEach((b,i)=>b.style.translate='0 '+(-y*(.1+i*.07)).toFixed(1)+'px')}
+    if(innerWidth<900){bk.style.transform='';ht.style.transform='';ht.style.opacity=''}else if(y<vh*1.4){const k=clamp(y/vh,0,1);bk.style.transform='translate3d(0,'+(k*70).toFixed(1)+'px,0) rotate('+(k*-9).toFixed(2)+'deg) scale('+(1-k*.14).toFixed(3)+')';ht.style.transform='translate3d(0,'+(k*-46).toFixed(1)+'px,0)';ht.style.opacity=(1-k*.95).toFixed(3);blobs.forEach((b,i)=>b.style.translate='0 '+(-y*(.1+i*.07)).toFixed(1)+'px')}
     /* outline rows */
     const r=rw.getBoundingClientRect();if(r.bottom>0&&r.top<vh){const p=(vh-r.top)/(vh+r.height);rows.forEach(row=>{const dir=+row.dataset.dir,w=row.scrollWidth/2;const x=dir<0?-p*w*.9:-w*.9+p*w*.9;row.style.setProperty('--x',x.toFixed(1)+'px')})}
     /* venn */
