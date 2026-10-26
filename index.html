@@ -414,15 +414,20 @@ footer a{color:var(--ink)}
   .ht{position:relative;height:100vh;height:100svh;min-height:0}
   .ht .fit{position:absolute;left:0;top:0;width:350px;transform-origin:0 0;display:flex;flex-direction:column;align-items:flex-start}
   .fit .ttl{margin:18px 0 16px}
-  .fit .l3{order:5}.fit .cta{order:4;margin:18px 0 16px}.fit .for{order:6}
+  .fit .l3,.fit .for{display:none}.fit .cta{margin:20px 0 0}
   .hvis{padding:40px 0 80px}
-  .fit.s1 .l3,.fit.s1 .for{display:none}.fit.s2 .l1{display:none}
+  .fit.s1 .l1{display:none}
+  .hmore{padding:34px var(--pad) 0;position:relative;z-index:1}
+  .hmore .l3{font-size:17px;line-height:1.6;max-width:30em}
+  .hmore .for{margin-top:16px}
   .ht p.l1{font-size:16.5px;line-height:1.5}
   .ht p.l2{margin:10px 0 0}
   .pn{justify-content:flex-end;padding-bottom:150px}
   .fx .pn.p1,.fx .pn.p2,.fx .pn.p3{justify-content:flex-end;padding-bottom:150px}
   .dc{right:auto;left:50%;margin-left:calc(min(66vw,300px)/-2);width:min(66vw,300px);top:calc(132px + env(safe-area-inset-top));bottom:auto}
 }
+.hmore{display:none}
+@media(max-width:899px){.hmore{display:block}}
 
 /* ===== next level ===== */
 .chip{position:absolute;z-index:4;font:800 clamp(13px,3.6vw,17px)/1 var(--sans);font-variation-settings:"wdth" 80,"wght" 800;text-transform:uppercase;letter-spacing:.03em;padding:10px 16px 9px;border:2px solid var(--ink);border-radius:99px;box-shadow:3px 4px 0 var(--ink);background:var(--yel);pointer-events:none;
@@ -542,6 +547,7 @@ footer a{color:var(--ink)}
       <div class="cta hv" style="--d:1600ms"><a class="btn mag" data-buy href="#get">Get the book <b>₦5,000</b></a><a class="btn g mag" href="#inside">Look inside</a></div>
       <p class="for hv" style="--d:1700ms">For young people ready to stop drifting and start living intentionally.</p>
     </div></div>
+    <div class="hmore"><p class="l3 rv">Learn how to combine character, commitment, and strategy to turn the person you want to become into the life you want to live.</p><p class="for rv">For young people ready to stop drifting and start living intentionally.</p></div>
     <div class="hvis hv" style="--d:900ms" id="hvis">
       <div class="bk" id="bk">
         <div class="bkb"><div class="bki"><img data-img="cover" alt="Cover of Goodness Is Not a Strategy by Olawale Eniola" width="720" height="1080"></div></div>
@@ -868,10 +874,9 @@ if(!reduce)$$('.scrub').forEach(el=>{const ws=[];(function walk(n){[...n.childNo
 (function(){const ht=$('.ht'),f=$('.fit',ht),mq=matchMedia('(max-width:899px)');
   function run(){
     if(!mq.matches){f.style.transform='';return}
-    f.style.transform='none';f.classList.remove('s1','s2');
-    const W=ht.clientWidth,H=ht.clientHeight,top=88,bot=22,aH=H-top-bot;let nh=f.offsetHeight;
-    const kw=(W-32)/350;
-    if(aH/nh<Math.min(kw,.85)){f.classList.add('s1');nh=f.offsetHeight;if(aH/nh<Math.min(kw,.78)){f.classList.add('s2');nh=f.offsetHeight}}
+    f.style.transform='none';f.classList.remove('s1');
+    const W=ht.clientWidth,H=ht.clientHeight,top=88,bot=24,aH=H-top-bot,kw=(W-40)/350;let nh=f.offsetHeight;
+    if(nh*kw>aH){f.classList.add('s1');nh=f.offsetHeight}
     const k=clamp(Math.min(kw,aH/nh),.4,1.7);
     f.style.transform='translate('+((W-350*k)/2).toFixed(1)+'px,'+(top+(aH-nh*k)/2).toFixed(1)+'px) scale('+k.toFixed(4)+')';
   }
